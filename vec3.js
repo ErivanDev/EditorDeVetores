@@ -33,7 +33,7 @@ class vec3 {
     //Magnitude
     length()
     {
-        return Math.sqrt( dot(this) );
+        return Math.sqrt( this.dot(this) );
     }
 
     //Distancia
@@ -78,7 +78,7 @@ class vec3 {
     //Angulo entre dois vetores
     angle( v ) 
     {
-        var theta = dot( v ) / length() * v.length();
+        var theta = this.dot( v ) / this.length() * v.length();
         if( theta >  1 ) theta =  1;
         if( theta < -1 ) theta = -1;
         return acos( theta );

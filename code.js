@@ -1,7 +1,4 @@
-var vectors = [];
-
-var t;
-var s = 1;
+var vectors = [], t, s = 1;
 
 function setup(){
     mycanvas = createCanvas(601, 601);
@@ -31,8 +28,8 @@ function draw(){
     var mah = height - t;
     for( var i = miw; i < maw; i+=10 ){
         for( var j = miw; j < maw; j+=10 ){
-            line( i , mih, i, mah );
-            line( miw , j, maw, j );
+            // line( i , mih, i, mah );
+            // line( miw , j, maw, j );
             // text( );
         }
     }
@@ -40,36 +37,64 @@ function draw(){
     textSize(12);
     text( mouse.x + ", " + mouse.y, mouse.x , mouse.y );
 
-    var sum;
-    for( let i = 0; i < vectors.length; i++ ){
+    var sum = undefined; 
+    for( var i = 0; i < vectors.length; i++ ){
         vectors[ i ].draw();
-        if( vectors[ i ].v2 != undefined ){
-            var aux = new vec3( vectors[ i ].v2.x - vectors[ i ].v1.x, 
-                                vectors[ i ].v2.y - vectors[ i ].v1.y );
+        if( vectors[ i ].vetor != undefined ){
             
-            if(sum == undefined)
-                sum = aux;
-            else 
-                sum = sum.add( aux );
+            if( sum == undefined ){
+                sum = new Obj( vectors[i].pos ); 
+                sum.vetor = vectors[i].vetor;
+            }
+            else{
+                sum.vetor = sum.vetor.add( vectors[i].vetor );
+            }
+
+
+
         }
     }
+    
+    
+    if( sum && vectors.length > 1 ){ 
+        sum.draw();
+    }
+}
 
-    if( vectors.length && sum != undefined ) 
-        line( vectors[ 0 ].v1.x , 
-              vectors[ 0 ].v1.y , 
-              vectors[ 0 ].v1.x + sum.x, 
-              vectors[ 0 ].v1.y + sum.y );
+function randomize(){
+    var numbers = [];
+    var copyVectors = vectors;
+
+    for(var i=0; i<vectors.length - 1; i++){
+        numbers.push( i );
+    }
+
+    for(var i=0; i<vectors.length - 1; i++){
+        var randN = Math.round( Math.random() * ( numbers.length - 1 ) ); 
+        
+        var aux = vectors[i].vetor;
+        vectors[i].vetor = copyVectors[ numbers[ randN ] ].vetor;
+        copyVectors[ numbers[ randN ] ].vetor = aux;
+
+        // vectors[i].titulo = "Vetor: " + randN + 1;
+    }
+
+    for(var i=1; i<vectors.length; i++){
+        vectors[i].pos = vectors[ i-1 ].pos.add( vectors[i-1].vetor ); 
+    }
 }
 
 function mouseClicked(){
-    var pos = new vec3( mouse.x, mouse.y );
-    
-    if( vectors.length ){
-        var vetor = new vec3( mouse.x, mouse.y ).sub( vectors[ vectors.length - 1 ].pos );
-        vectors[ vectors.length - 1 ].vetor = vetor;
+    if( mouseX>0 && mouseY>0 ){
+        var pos = new vec3( mouse.x, mouse.y );
+        
+        if( vectors.length ){
+            var vetor = new vec3( mouse.x, mouse.y ).sub( vectors[ vectors.length - 1 ].pos );
+            vectors[ vectors.length - 1 ].vetor = vetor;
+        }
+        
+        vectors.push( new Obj( pos ) );
     }
-    
-    vectors.push( new Obj( pos ) );
 }
 
 class Obj {
@@ -79,11 +104,22 @@ class Obj {
     }
 
     draw(){
+        if( this.titulo == undefined ){
+            this.titulo = "Vetor: " + ( vectors.indexOf( this ) + 1 );
+        }
         if( this.vetor != undefined ){
             var aux = this.pos.add( this.vetor ); 
             line( this.pos.x , this.pos.y , aux.x , aux.y );
+
+            var ang = aux.angle( new vec3( aux.x , aux.y - 10, 0 ) );
+            // console.log(ang);
+
+            triangle( aux.x - cos(ang) * 5, aux.y - sin(ang) * 5, 
+                      aux.x    , aux.y + 5, 
+                      aux.x + cos(ang) * 5, aux.y - sin(ang) * 5 );
+            
             var posT = this.pos.add( this.vetor.div( 2 ) );
-            text( "erinva", posT.x , posT.y );  
+            text( this.titulo , posT.x , posT.y );  
         }
         else{
             line( this.pos.x , this.pos.y , mouse.x , mouse.y );
