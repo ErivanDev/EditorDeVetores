@@ -32,13 +32,12 @@ function draw(){
             for( var j = miw; j < maw; j+=10 ){
                 line( i , mih, i, mah );
                 line( miw , j, maw, j );
-                // text( );
             }
         }
     }   
 
     textSize(12);
-    text( mouse.x + ", " + mouse.y, mouse.x , mouse.y );
+    text( int(mouse.x) + ", " + int(mouse.y), mouse.x , mouse.y );
 
     var sum = undefined; 
     for( var i = 0; i < vectors.length; i++ ){
@@ -83,8 +82,6 @@ function randomize(){
 
         vectors[i].titulo = copyVectors[ numbers[ randN ] ].titulo;
         copyVectors[ numbers[ randN ] ].titulo = titulo;
-
-        // vectors[i].titulo = "Vetor: " + randN + 1;
     }
 
     for(var i=1; i<vectors.length; i++){
@@ -113,14 +110,9 @@ class Obj {
     }
 
     draw(){
-        // if( this.titulo == undefined ){
-        //     this.titulo = "Vetor: " + ( vectors.indexOf( this ) + 1 );
-        // }
         if( this.vetor != undefined ){
             var aux = this.pos.add( this.vetor ); 
             line( this.pos.x , this.pos.y , aux.x , aux.y );
-
-            // var ang = aux.angle( new vec3( aux.x , aux.y - 10, 0 ) );
 
             var xx = aux.x - this.pos.x; 
             var yy = aux.y - this.pos.y; 
@@ -131,8 +123,6 @@ class Obj {
             triangle( aux.x + cos(ang) * 5, aux.y + sin(ang) * 5, 
                       aux.x + cos(ang + PI/2) * 5, aux.y + sin(ang + PI/2) * 5, 
                       aux.x + cos(ang - PI/2) * 5, aux.y + sin(ang - PI/2) * 5 );
-
-            // line(aux.x - cos(ang) * 5, aux.y - sin(ang) * 5);
             
             var posT = this.pos.add( this.vetor.div( 2 ) );
             
@@ -142,9 +132,6 @@ class Obj {
                 fill(0); stroke(0);
             }
         }
-        // else{
-        //     line( this.pos.x , this.pos.y , mouse.x , mouse.y );
-        // }
     }
 }
 
